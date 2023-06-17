@@ -2,11 +2,13 @@ use ambient_api::{
     components::core::{
         app::main_scene,
         camera::aspect_ratio_from_window,
+        ecs::{children, parent},
+        prefab::{prefab_from_url},
         primitives::{cube, quad},
         rendering::{
             color, fog_density, light_diffuse, sky, sun,
         },
-        transform::{lookat_target, translation, scale},
+        transform::{lookat_target, translation, scale, local_to_parent},
     },
     concepts::{make_perspective_infinite_reverse_camera, make_transformable, make_sphere},
     prelude::*,
@@ -40,25 +42,56 @@ pub fn main() {
         .spawn();
 
     let playerDoffer = Entity::new()
-        .with_merge(make_transformable())
-        .with(translation(),vec3(2.5, 0., 2.5))
-        .with(rotation(), Quat::from_rotation_x(1.5))
-        .with_default(cube())
-        .with_default(dofpitch())
-        .with_default(dofroll())
-        .with_default(dofyaw())
-        .with_default(dofpitch_vel())
-        .with_default(dofroll_vel())
-        .with_default(dofyaw_vel())
-        .with_default(dofpitch_pin())
-        .with_default(dofroll_pin())
-        .with_default(dofyaw_pin())
-        .with_default(throttle())
-        .with_default(throttle_pin())
-        .with(temppointerent(), playerPointer)
-        .with(tempcameraent(), playerCamera)
-        .with(color(), vec4(0.2, 0.8, 1., 1.))
         .spawn();
+
+    let playerModel = Entity::new()
+        .with_merge(make_transformable())
+        .with_default(main_scene())
+        .with(parent(), playerDoffer)
+        .with_default(local_to_parent())
+        .with(prefab_from_url(), asset::url("assets/scorpio.glb").unwrap())
+        .with(scale(), vec3(0.1,0.1,0.1))
+        .with(rotation(), Quat::from_rotation_y(3.14))
+        .spawn();
+
+
+    let _workingPlayerAdditionalPiece = Entity::new()
+        // .with_merge(make_perspective_infinite_reverse_camera())
+        // .with(aspect_ratio_from_window(), EntityId::resources())
+        .with_merge(make_sphere())
+        .with_default(main_scene())
+        // .with(user_id(), uid)
+        .with(translation(), Vec3::Z * 2.)
+        .with(parent(), playerDoffer)
+        .with_default(local_to_parent())
+        // .with(rotation(), Quat::from_rotation_x(PI / 2.))
+        .spawn();
+
+
+    entity::add_components(playerDoffer,
+        Entity::new()
+            .with_merge(make_transformable())
+            .with(translation(),vec3(2.5, 0., 2.5))
+            .with(rotation(), Quat::from_rotation_x(1.5))
+            // .with_default(cube())
+            // .with(prefab_from_url(), asset::url("assets/scorpio.glb").unwrap())
+            .with(children(), vec![playerModel, _workingPlayerAdditionalPiece])
+            .with(scale(), vec3(0.01,0.01,0.01))
+            .with_default(dofpitch())
+            .with_default(dofroll())
+            .with_default(dofyaw())
+            .with_default(dofpitch_vel())
+            .with_default(dofroll_vel())
+            .with_default(dofyaw_vel())
+            .with_default(dofpitch_pin())
+            .with_default(dofroll_pin())
+            .with_default(dofyaw_pin())
+            .with_default(throttle())
+            .with_default(throttle_pin())
+            .with(temppointerent(), playerPointer)
+            .with(tempcameraent(), playerCamera)
+            .with(color(), vec4(0.2, 0.8, 1., 1.))
+    );
 
     query( (dofpitch(),dofroll(),dofyaw(),dofpitch_vel(),dofroll_vel(),dofyaw_vel(),dofpitch_pin(),dofroll_pin(),dofyaw_pin()) ).each_frame(|doffers|{
         for (doffer,(_p,_r,_y,pv,rv,yv,ppin,rpin,ypin)) in doffers {

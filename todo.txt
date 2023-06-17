@@ -10,3 +10,9 @@ x return throttle to original
 [2m] git
 [2m] normal throttle
 [13m] double tap hold throttle
+[16m] x unsolved vertical ship model blrgh
+
+other magic stuff
+- documentation should link to the Book when possible?
+	e.g. docs for parent/child/local_to_parent/local_to_world in the api should link to https://ambientrun.github.io/Ambient/reference/hierarchies.html
+- learn: how to edit documentation?

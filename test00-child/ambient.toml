@@ -1,0 +1,4 @@
+[project]
+id = "test_00_child"
+name = "test00-child"
+version = "0.0.1"
