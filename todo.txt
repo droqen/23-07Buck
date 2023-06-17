@@ -1,0 +1,11 @@
+todo (June 17)
+- planets
+- multiplayer?
+x return throttle to original
+	- double tap to maintain throttle?
+- strafe
+- new model
+- death on collision
+
+[2m] git
+[2m] normal throttle

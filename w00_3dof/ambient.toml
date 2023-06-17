@@ -25,6 +25,3 @@ p = { type = "F32" }
 r = { type = "F32" }
 y = { type = "F32" }
 throttle = { type = "F32" }
-
-[messages.player_change_gear.fields]
-gear = { type = "I32" } #0-8

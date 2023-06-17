@@ -88,7 +88,7 @@ pub fn main() {
 
     query( (translation(), rotation(), throttle(), throttle_pin()) ).each_frame(|movers|{
         for (mover,(pos,rot,speed,speed_pin)) in movers {
-            entity::set_component(mover, translation(), pos + rot * vec3(0., 0., speed * VELTOPIN_MAX_SPEED));
+            entity::set_component(mover, translation(), pos + rot * vec3(0., 0., speed * VELTOPIN_THROTTLE_SPEED));
             entity::set_component(mover, throttle(), veltopin(speed, speed_pin));
         };
     });
@@ -97,11 +97,7 @@ pub fn main() {
         entity::set_component(playerDoffer, dofpitch_pin(), -msg.p);
         entity::set_component(playerDoffer, dofroll_pin(), -msg.r);
         entity::set_component(playerDoffer, dofyaw_pin(), msg.y);
-        // entity::set_component(playerDoffer, throttle_pin(), msg.throttle);
-    });
-
-    messages::PlayerChangeGear::subscribe(move |source, msg|{
-        entity::set_component(playerDoffer, throttle_pin(), msg.gear as f32 * 0.25);
+        entity::set_component(playerDoffer, throttle_pin(), msg.throttle);
     });
 
     println!("Hello, Ambient!");
@@ -114,7 +110,7 @@ fn tow(a:f32,b:f32,linrate:f32,multrate:f32) -> f32 {
     return b;
 }
 
-const VELTOPIN_MAX_SPEED : f32 = 1.00;
+const VELTOPIN_THROTTLE_SPEED : f32 = 1.00;
 const VELTOPIN_MAX_ROTSPEED : f32 = 0.04;
 
 const VELTOPIN_ACTIVE_LINEAR_RATE : f32 = 0.002;
