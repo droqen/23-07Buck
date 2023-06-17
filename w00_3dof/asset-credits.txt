@@ -1,0 +1,3 @@
+asset-credits.txt
+
+scorpio.glb https://sketchfab.com/3d-models/scorpio-c1c2cec3e95c429c96a9e59b9b84d4fc Clément Dussol
