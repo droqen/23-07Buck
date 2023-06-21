@@ -1,18 +1,21 @@
 todo (June 17)
 - planets
-- multiplayer?
+x multiplayer?
 x return throttle to original
 	x double tap to maintain throttle?
 - strafe
-- new model
+x new model
 - death on collision
 
 [2m] git
 [2m] normal throttle
 [13m] double tap hold throttle
 [16m] x unsolved vertical ship model blrgh
+[???hrs] ship model works, multiplayer works :)
 
 other magic stuff
 - documentation should link to the Book when possible?
 	e.g. docs for parent/child/local_to_parent/local_to_world in the api should link to https://ambientrun.github.io/Ambient/reference/hierarchies.html
 - learn: how to edit documentation?
+- ECS visualization is obvious; concepts are groups of components, also obvious useful things
+	- queries are ALSO obvious, which is very cool! just a drag n drop function call with parameters
