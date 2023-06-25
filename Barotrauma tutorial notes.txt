@@ -1,0 +1,10 @@
+Barotrauma tutorial notes
+- Teaches each role's tasks in a clear and simple way and sort of sets up a bit of interpersonal drama? (Stereotypes about each role.)
+- Players' roles are to manage buffers before they get too full or too empty.
+* There are options for buffers to manage themselves
+* There are options for more manual control for better control in many cases
+* There are options for players to 'enable' additional buffers to manage for higher speeds, e.g. overheating a supercapacitor allows it to fill with power faster but it also builds up heat which you don't want to reach 100% or else
+
+- Many possibilities for players to make mistakes! These are intentionally set up to cause (fun?) problems of bad buffer management.
+- Many problems occur as a result of other players' mistakes or mismanagement of buffers
+- Fixing each other's problems. Is this fun?
