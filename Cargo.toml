@@ -2,6 +2,7 @@
 
 members = [
     "w00_3dof",
+    "w01_hex",
 
     "test00-child"
 ]
