@@ -4,5 +4,6 @@ members = [
     "w00_3dof",
     "w01_hex",
 
-    "test00-child"
+    "test00-child",
+    "test01-filter-scopes",
 ]

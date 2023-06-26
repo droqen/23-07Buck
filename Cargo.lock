@@ -971,6 +971,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "test01-filter-scopes"
+version = "0.1.0"
+
+[[package]]
 name = "test_00_child"
 version = "0.0.1"
 dependencies = [

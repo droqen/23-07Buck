@@ -2,3 +2,13 @@
 id = "w_01_hex"
 name = "w01_hex"
 version = "0.0.1"
+
+[components]
+hexx = { type = "I32" }
+hexy = { type = "I32" }
+hexheight = { type = "F32" }
+camera_finder = { type = "Bool", attributes = ["Networked"] }
+
+[messages.pin_ray.fields]
+ray_origin = { type = "Vec3" }
+ray_dir = { type = "Vec3" }

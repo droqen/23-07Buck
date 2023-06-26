@@ -3,12 +3,16 @@ use ambient_api::{
         app::main_scene,
         camera::aspect_ratio_from_window,
         ecs::{children, parent, },
+        physics::{cube_collider, },
         primitives::{cube, quad, },
+        rendering::{color,},
         transform::{lookat_target, translation, local_to_parent, local_to_world, },
     },
     concepts::{make_perspective_infinite_reverse_camera, make_transformable},
     prelude::*,
 };
+
+use components::{hexx, hexy, hexheight, camera_finder};
 
 use std::f32::consts::{PI, TAU};
 
@@ -24,9 +28,44 @@ pub fn main() {
         .with_merge(make_perspective_infinite_reverse_camera())
         .with(aspect_ratio_from_window(), EntityId::resources())
         .with_default(main_scene())
+        .with_default(camera_finder())
         .with(translation(), vec3(0., 10., 5.))
         .with(lookat_target(), vec3(0., 5., 0.))
         .spawn();
+
+    change_query( (color(),hexheight(),children(),hexx(),hexy()) )
+        .track_change((color(),hexheight()))
+        .bind(move |hexes| {
+            for (_, (new_hex_colour,hh,children,_hx,_hy)) in hexes {
+                for child_of_hex in children {
+                    entity::add_component(child_of_hex, color(), new_hex_colour);
+                    entity::mutate_component(child_of_hex, translation(), |pos| { pos.z = 0.5 * hh; });
+                    entity::mutate_component(child_of_hex, scale(), |siz| { siz.z = 1.0 * hh; });
+                }
+            }
+        });
+
+    messages::PinRay::subscribe(|_source,msg|{
+        if let Some(hit) = physics::raycast_first(msg.ray_origin, msg.ray_dir) {
+            // Set position of cube to the raycast hit position
+            if let Some(parent_hex) = entity::get_component(hit.entity, parent()) {
+                if entity::has_component(parent_hex, hexheight()) {
+                    entity::mutate_component(parent_hex, hexheight(), |hh| {
+                        *hh += 0.01;
+                        println!("Mutating...");
+                    });
+                } else {
+                    println!("Parent has no hh");
+                }
+            } else {
+                println!("No parent");
+            }
+            // entity::set_component(cube_id, translation(), hit.position);
+            // messages::WorldPosition::new(hit.position).send_client_broadcast_unreliable();
+        } else {
+            println!("No raycast hit");
+        }
+    });
 
     // Entity::new()
     //     .with_merge(make_transformable())
@@ -37,14 +76,39 @@ pub fn main() {
         make_hex(x-y/2,y);
     }}
 
-    println!("Hello, Ambient!");
+    // for x in -4..5 { for y in 0..2 {
+    //     make_hex(x,y);
+    // }}
+
+    for hex in get_neighbour_hexes(0, 5) {
+        entity::add_component(hex, color(), vec3(1., 1., 1.).extend(1.));
+    }
+}
+
+fn get_hexgrid_dist(hx0 : &i32, hy0 : &i32, hx1 : &i32, hy1 : &i32) -> u32 {
+    let dist = (i32::abs(hx0-hx1) + i32::abs(hy0-hy1) + i32::abs(hx0+hy0-hx1-hy1)) as u32 / 2;
+    dist
+}
+
+fn get_neighbour_hexes(hx0 : i32, hy0 : i32) -> Vec<EntityId> {
+    query((hexx(), hexy()))
+        .build()
+        .evaluate()
+        .iter()
+        .filter_map(|(id, (hx1, hy1,))| (get_hexgrid_dist(&hx0, &hy0, &hx1, &hy1) == 1).then_some(id)) // using borrows. why???
+        .map(|id| id.clone()) // instead of .into_bindgen(), used .clone() - how wrong is this??
+        .collect()
 }
 
 fn make_hex(hx : i32, hy : i32) -> EntityId {
     let hex = Entity::new()
+        .with(hexx(), hx)
+        .with(hexy(), hy)
+        .with(hexheight(), (0.5 + 1.5 * random::<f32>()))
         .with_merge(make_transformable())
-        .with(translation(), dbg!(get_hex_translation(hx, hy)))
+        .with(translation(), get_hex_translation(hx, hy))
         .with(scale(), Vec3::splat(0.95))
+            .with(color(), (random::<Vec3>()*0.2).extend(1.))
         .with_default(local_to_world())
         .spawn();
     entity::add_component(hex, children(), vec![
@@ -65,10 +129,11 @@ fn get_hex_translation(hx : i32, hy : i32) -> Vec3 {
     )
 }
 
-fn make_hex_third(hex_parent : EntityId, third_index : u8) -> EntityId {
+fn make_hex_third( hex_parent : EntityId, third_index : u8) -> EntityId {
     Entity::new()
-        // .with_default(cube())
-        .with_default(quad())
+        .with_default(cube())
+        .with(cube_collider(), Vec3::ONE)
+        // .with_default(quad())
         .with_default(local_to_parent())
         .with(parent(), hex_parent)
         .with(scale(), vec3(1., 0.5774, 0.1))
