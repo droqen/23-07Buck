@@ -22,13 +22,52 @@ pub fn main() {
     // let pinControlled = query((cx(),cy())).requires(controlled_by_pin()).build();
     messages::PlayerCommand::subscribe(move |source,msg|{
         let Some(player_id) = source.client_entity_id() else { return; };
-        entity::mutate_component(player_id, cx(), |cx|*cx += msg.mvx);
-        entity::mutate_component(player_id, cy(), |cy|*cy += msg.mvy);
+        entity::add_component(player_id, move_cx(), msg.mvx);
+        entity::add_component(player_id, move_cy(), msg.mvy);
+        // entity::mutate_component(player_id, cx(), |cx|*cx += msg.mvx);
+        // entity::mutate_component(player_id, cy(), |cy|*cy += msg.mvy);
         // for (id,(cx0,cy0)) in pinControlled.evaluate() {
         //     entity::set_component(id, cx(), cx0 + msg.mvx);
         //     entity::set_component(id, cy(), cy0 + msg.mvy);
         // }
     });
+
+    let find_grid_entities = query( (cx(),cy()) ).build();
+    query( (cx(),cy(),move_cx(),move_cy()) ).each_frame(
+        move |grid_movers|for(id,(x,y,dx,dy))in grid_movers{
+            let x2=x+dx; let y2=y+dy;
+            let mut blocking_ents : Vec<EntityId> = vec![];
+            for (bid,(bx,by)) in find_grid_entities.evaluate() {
+                if bx==x2 && by==y2 {blocking_ents.push(bid)};
+            }
+            if blocking_ents.is_empty() {
+                entity::mutate_component(id, cx(), |curx|*curx=x2);
+                entity::mutate_component(id, cy(), |cury|*cury=y2);
+            } else {
+                entity::mutate_component(id, translation(), |pos|*pos=(*pos+cxy_to_vec3(x2, y2))/2.);
+                println!("Movement Blocked");
+                push_ent(blocking_ents[0], id, dx, dy);
+            }
+            entity::remove_components(id, &[&move_cx(), &move_cy()]);
+        }
+    );
+
+    query( (cx(),cy(),pushed_dx(),pushed_dy(),pushed_src()) ).each_frame(
+        move|grid_pushed|for(id,(x,y,dx,dy,src))in grid_pushed{
+            println!("A push was attempted.");
+            dbg!(entity::get_component(id, name()));
+            match dbg!(entity::get_component(id, pushable())) {
+                Some(_) => {
+                    entity::add_component(id, move_cx(), dx);
+                    entity::add_component(id, move_cy(), dy);
+                }
+                _ => {
+                    entity::mutate_component(id, translation(), |pos|*pos=0.75**pos + 0.25*cxy_to_vec3(x+dx, y+dy));
+                }
+            }
+            entity::remove_components(id, &[&pushed_dx(),&pushed_dy(),&pushed_src()]);
+        }
+    );
 
     spawn_query( (player(), user_id()) ).bind(|spawnedPlayers| {
         for (grid_player,(_,uid)) in spawnedPlayers {
@@ -42,9 +81,7 @@ pub fn main() {
                     .with_merge(make_grid_creature())
                     .with_merge(make_grid_player())
                     .with_default(local_to_world())
-                    .with(cx(), cx0)
-                    .with(cy(), cy0)
-                    .with(translation(), cxy_to_vec3(cx0, cy0))
+                    .with_merge(make_cxyent(cx0, cy0))
             );
 
             entity::add_child(grid_player, Entity::new()
@@ -57,6 +94,37 @@ pub fn main() {
             .spawn());
         }
     });
+
+    let grid_wall = Entity::new()
+        .with(name(), "grid_wall".to_string())
+        .with_merge(make_transformable())
+        .with_merge(make_grid_creature())
+        .with_default(local_to_world())
+        .with_merge(make_cxyent(0, 0))
+        .spawn();
+    entity::add_child(grid_wall, Entity::new()
+        .with(translation(), vec3(0., 0., 0.1))
+        .with(scale(), Vec3::splat(0.9))
+        .with_default(cube())
+        .with_default(local_to_parent())
+        .with(color(), vec3(0.1, 0.1, 0.1).extend(1.))
+    .spawn());
+
+    let grid_crate = Entity::new()
+        .with(name(), "grid_crate".to_string())
+        .with_merge(make_transformable())
+        .with_merge(make_grid_creature())
+        .with_default(pushable())
+        .with_default(local_to_world())
+        .with_merge(make_cxyent(2, 0))
+        .spawn();
+    entity::add_child(grid_crate, Entity::new()
+        .with(translation(), vec3(0., 0., 0.2))
+        .with(scale(), Vec3::splat(0.8))
+        .with_default(cube())
+        .with_default(local_to_parent())
+        .with(color(), vec3(1., 0.5, 0.).extend(1.))
+    .spawn());
 
     // When a player despawns, clean up their objects. (Taken from minigolf)
     let player_objects_query = query(user_id()).build();
@@ -75,7 +143,20 @@ pub fn main() {
     });
 }
 
+fn make_cxyent(x : i32, y : i32) -> Entity {
+    Entity::new()
+        .with(cx(), x)
+        .with(cy(), y)
+        .with(translation(), cxy_to_vec3(x, y))
+}
 fn cxy_to_vec3(x : i32, y : i32) -> Vec3 { vec2(x as f32, y as f32).extend(0.) }
+fn push_ent(pushed : EntityId, pusher : EntityId, dx : i32, dy : i32) {
+    entity::add_components(pushed, Entity::new()
+        .with(pushed_src(), pusher)
+        .with(pushed_dx(), dx)
+        .with(pushed_dy(), dy)
+    );
+}
 
 use ambient_api::{
     components::core::{
@@ -89,5 +170,5 @@ use ambient_api::{
     prelude::*,
 };
 
-use components::{cx, cy, health, controlled_by_pin, };
+use components::{cx, cy, move_cx, move_cy, pushed_src, pushed_dx, pushed_dy, health, controlled_by_pin,pushable, };
 use concepts::{make_grid_creature, make_grid_player, };
