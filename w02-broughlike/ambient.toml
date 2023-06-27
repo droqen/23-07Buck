@@ -6,6 +6,11 @@ version = "0.0.1"
 [components]
 cx = { type = "I32" }
 cy = { type = "I32" }
+move_cx = { type = "I32" }
+move_cy = { type = "I32" }
+pushed_src = { type = "EntityId" }
+pushed_dx = { type = "I32" }
+pushed_dy = { type = "I32" }
 pushable = { type = "Empty" }
 health = { type = "U32" }
 moves_towards_player = { type = "Bool" }
