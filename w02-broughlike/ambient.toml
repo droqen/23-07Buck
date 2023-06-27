@@ -1,0 +1,46 @@
+[project]
+id = "w_02_broughlike"
+name = "w02-broughlike"
+version = "0.0.1"
+
+[components]
+cx = { type = "I32" }
+cy = { type = "I32" }
+pushable = { type = "Empty" }
+health = { type = "U32" }
+moves_towards_player = { type = "Bool" }
+attacks_player = { type = "Bool" }
+team_flags = { type = "U32" }
+controlled_by_pin = { type = "Bool" }
+
+[messages.player_command.fields]
+mvx = { type = "I32" }
+mvy = { type = "I32" }
+
+[concepts.grid_creature]
+name = "Grid Creature"
+description = "Standard grid-aligned entity"
+[concepts.grid_creature.components]
+cx = 0
+cy = 0
+health = 1
+team_flags = 0x00000000
+
+[concepts.grid_player]
+name = "Grid Player"
+description = "An entity that is controlled by a user"
+extends = ["grid_creature"]
+[concepts.grid_player.components]
+health = 5
+team_flags = 0x00000001
+controlled_by_pin = true
+
+[concepts.grid_monster]
+name = "Grid Monster"
+description = "A creature that can attack the player and can be attacked as well"
+extends = ["grid_creature"]
+[concepts.grid_monster.components]
+health = 1
+team_flags = 0x00000010
+attacks_player = true
+moves_towards_player = true

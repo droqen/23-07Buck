@@ -3,6 +3,7 @@
 members = [
     "w00_3dof",
     "w01_hex",
+    "w02-broughlike",
 
     "test00-child",
     "test01-filter-scopes",
