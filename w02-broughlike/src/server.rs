@@ -95,37 +95,6 @@ pub fn main() {
         }
     });
 
-    let grid_wall = Entity::new()
-        .with(name(), "grid_wall".to_string())
-        .with_merge(make_transformable())
-        .with_merge(make_grid_creature())
-        .with_default(local_to_world())
-        .with_merge(make_cxyent(0, 0))
-        .spawn();
-    entity::add_child(grid_wall, Entity::new()
-        .with(translation(), vec3(0., 0., 0.1))
-        .with(scale(), Vec3::splat(0.9))
-        .with_default(cube())
-        .with_default(local_to_parent())
-        .with(color(), vec3(0.1, 0.1, 0.1).extend(1.))
-    .spawn());
-
-    let grid_crate = Entity::new()
-        .with(name(), "grid_crate".to_string())
-        .with_merge(make_transformable())
-        .with_merge(make_grid_creature())
-        .with_default(pushable())
-        .with_default(local_to_world())
-        .with_merge(make_cxyent(2, 0))
-        .spawn();
-    entity::add_child(grid_crate, Entity::new()
-        .with(translation(), vec3(0., 0., 0.2))
-        .with(scale(), Vec3::splat(0.8))
-        .with_default(cube())
-        .with_default(local_to_parent())
-        .with(color(), vec3(1., 0.5, 0.).extend(1.))
-    .spawn());
-
     // When a player despawns, clean up their objects. (Taken from minigolf)
     let player_objects_query = query(user_id()).build();
     despawn_query(user_id()).requires(player()).bind({
@@ -156,6 +125,39 @@ fn push_ent(pushed : EntityId, pusher : EntityId, dx : i32, dy : i32) {
         .with(pushed_dx(), dx)
         .with(pushed_dy(), dy)
     );
+}
+
+fn gen_static_obstacles() {
+    let grid_wall = Entity::new()
+        .with(name(), "grid_wall".to_string())
+        .with_merge(make_transformable())
+        .with_merge(make_grid_creature())
+        .with_default(local_to_world())
+        .with_merge(make_cxyent(0, 0))
+        .spawn();
+    entity::add_child(grid_wall, Entity::new()
+        .with(translation(), vec3(0., 0., 0.1))
+        .with(scale(), Vec3::splat(0.9))
+        .with_default(cube())
+        .with_default(local_to_parent())
+        .with(color(), vec3(0.1, 0.1, 0.1).extend(1.))
+    .spawn());
+
+    let grid_crate = Entity::new()
+        .with(name(), "grid_crate".to_string())
+        .with_merge(make_transformable())
+        .with_merge(make_grid_creature())
+        .with_default(pushable())
+        .with_default(local_to_world())
+        .with_merge(make_cxyent(2, 0))
+        .spawn();
+    entity::add_child(grid_crate, Entity::new()
+        .with(translation(), vec3(0., 0., 0.2))
+        .with(scale(), Vec3::splat(0.8))
+        .with_default(cube())
+        .with_default(local_to_parent())
+        .with(color(), vec3(1., 0.5, 0.).extend(1.))
+    .spawn());
 }
 
 use ambient_api::{
