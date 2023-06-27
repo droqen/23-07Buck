@@ -3,7 +3,7 @@ use ambient_api::{
         app::main_scene,
         camera::aspect_ratio_from_window,
         ecs::{children, parent, },
-        physics::{cube_collider, },
+        physics::{cube_collider, visualize_collider, },
         primitives::{cube, quad, },
         rendering::{color,},
         transform::{lookat_target, translation, local_to_parent, local_to_world, },
@@ -24,6 +24,7 @@ const UNIT_HEXA_ROW_OFFSET : f32 = UNIT_HEXA_SIDE * 1.5;
 
 #[main]
 pub fn main() {
+
     Entity::new()
         .with_merge(make_perspective_infinite_reverse_camera())
         .with(aspect_ratio_from_window(), EntityId::resources())
@@ -45,9 +46,8 @@ pub fn main() {
             }
         });
 
-    messages::PinRay::subscribe(|_source,msg|{
+    messages::PinRay::subscribe(move |_source,msg|{
         if let Some(hit) = physics::raycast_first(msg.ray_origin, msg.ray_dir) {
-            // Set position of cube to the raycast hit position
             if let Some(parent_hex) = entity::get_component(hit.entity, parent()) {
                 if entity::has_component(parent_hex, hexheight()) {
                     entity::mutate_component(parent_hex, hexheight(), |hh| {
@@ -67,22 +67,22 @@ pub fn main() {
         }
     });
 
-    // Entity::new()
-    //     .with_merge(make_transformable())
-    //     .with_default(quad())
-    //     .spawn();
-
-    for x in -4..5 { for y in 0..10 {
-        make_hex(x-y/2,y);
-    }}
-
-    // for x in -4..5 { for y in 0..2 {
-    //     make_hex(x,y);
-    // }}
+    generate_hexgrid();
 
     for hex in get_neighbour_hexes(0, 5) {
         entity::add_component(hex, color(), vec3(1., 1., 1.).extend(1.));
     }
+}
+
+fn generate_hexgrid() {
+    // big screen-filling grid
+    for x in -4..5 { for y in 0..10 { make_hex(x-y/2,y); } }
+
+    // // tiny test grid
+    // for x in -1..1+1 { for y in 4..6+1 { make_hex(x-y/2,y); } }
+
+    // // narrow test grid
+    // for x in -4..5 { for y in 0..2 { make_hex(x,y); } }
 }
 
 fn get_hexgrid_dist(hx0 : &i32, hy0 : &i32, hx1 : &i32, hy1 : &i32) -> u32 {
@@ -133,6 +133,7 @@ fn make_hex_third( hex_parent : EntityId, third_index : u8) -> EntityId {
     Entity::new()
         .with_default(cube())
         .with(cube_collider(), Vec3::ONE)
+        .with_default(visualize_collider())
         // .with_default(quad())
         .with_default(local_to_parent())
         .with(parent(), hex_parent)
