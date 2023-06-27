@@ -6,4 +6,5 @@ members = [
 
     "test00-child",
     "test01-filter-scopes",
+    "test02-parent-collider",
 ]

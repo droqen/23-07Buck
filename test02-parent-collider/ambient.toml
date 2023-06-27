@@ -1,0 +1,4 @@
+[project]
+id = "test_02_parent_collider"
+name = "test02-parent-collider"
+version = "0.0.1"

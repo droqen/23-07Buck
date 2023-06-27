@@ -982,6 +982,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_02_parent_collider"
+version = "0.0.1"
+dependencies = [
+ "ambient_api",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
