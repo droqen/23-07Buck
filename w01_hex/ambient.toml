@@ -6,7 +6,7 @@ version = "0.0.1"
 [components]
 hexx = { type = "I32" }
 hexy = { type = "I32" }
-hexheight = { type = "F32" }
+# hexheight = { type = "F32" }
 camera_finder = { type = "Bool", attributes = ["Networked"] }
 
 [messages.pin_ray.fields]
