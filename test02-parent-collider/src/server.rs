@@ -13,6 +13,7 @@ use ambient_api::{
 
 #[main]
 pub fn main() {
+
     Entity::new()
         .with_merge(make_perspective_infinite_reverse_camera())
         .with(aspect_ratio_from_window(), EntityId::resources())
@@ -39,6 +40,10 @@ pub fn main() {
     entity::add_component(parent_position_only, children(), vec![child_mesh_and_collider]);
     entity::add_component(child_mesh_and_collider, parent(), parent_position_only);
 
+    // * * * * *
+    // you can comment out everything below this line for a more minimal repro
+    // * * * * *
+
     let all_in_one = Entity::new()
         .with(name(), "all components in one".to_string())
         .with_merge(make_transformable())
@@ -48,8 +53,9 @@ pub fn main() {
         .with_default(visualize_collider())
         .spawn();
 
-    //showing how each responds to translation, rotation, scale
-    
+    // showing in real time how each responds to translation, rotation, scale
+    // note how scale is not passed to collider; i think this is common/expected, but was useful for me to see
+
     query(rotation()).excludes(lookat_target()).each_frame(|rotatables|{
         for (id,(_rotation)) in rotatables {
             entity::mutate_component(id,rotation(),|mut rot|{
