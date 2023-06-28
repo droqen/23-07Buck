@@ -19,6 +19,8 @@ pub fn main() {
         }
     });
 
+    gen_static_obstacles();
+
     // let pinControlled = query((cx(),cy())).requires(controlled_by_pin()).build();
     messages::PlayerCommand::subscribe(move |source,msg|{
         let Some(player_id) = source.client_entity_id() else { return; };
