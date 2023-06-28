@@ -1,0 +1,5 @@
+06/28
+starting today i forget what yesterday's intentions were. may not get a lot done.
+ok, i'd like to use actual assets for my objects and not feel constrained to cubes.
+	[x] simple 3d models - took four or so hours to learn how to make models (not good ones) + make them work.
+	[ ] simple 2d sprites (billboarded)

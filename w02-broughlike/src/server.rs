@@ -1,25 +1,15 @@
 #[main]
 pub fn main() {
-    Entity::new()
-        .with_merge(make_perspective_infinite_reverse_camera())
-        .with(aspect_ratio_from_window(), EntityId::resources())
-        .with_default(main_scene())
-        .with(translation(), vec3(0., 3., 10.))
-        .with(lookat_target(), vec3(0., 0., 0.))
-        .spawn();
 
-    Entity::new()
-        .with_merge(make_transformable())
-        .with_default(quad())
-        .spawn();
+    setup_camera();
+    setup_environment();
+    setup_static_obstacles();
 
     query( ( cx(), cy(), translation(), ) ).each_frame(|grid_movers|{
         for (id,(x,y,cur_pos)) in grid_movers {
             entity::set_component(id, translation(), (cur_pos + cxy_to_vec3(x, y))/2. );
         }
     });
-
-    gen_static_obstacles();
 
     // let pinControlled = query((cx(),cy())).requires(controlled_by_pin()).build();
     messages::PlayerCommand::subscribe(move |source,msg|{
@@ -89,7 +79,10 @@ pub fn main() {
             entity::add_child(grid_player, Entity::new()
                 .with(translation(), vec3(0., 0., 0.5))
                 .with(scale(), Vec3::splat(0.5))
-                .with_default(cube())
+                // .with_default(cube())
+                    .with(prefab_from_url(), asset::url("assets/person figure.glb").unwrap())
+                    .with(scale(), vec3(0.15, 0.20, 0.15))
+                    .with(rotation(), Quat::from_rotation_z(PI*0.25))
                 .with_default(local_to_parent())
                 .with(user_id(), uid)
                 .with(color(), random::<Vec3>().extend(1.)) // TODO: player colour should eventually derive from parent
@@ -129,7 +122,26 @@ fn push_ent(pushed : EntityId, pusher : EntityId, dx : i32, dy : i32) {
     );
 }
 
-fn gen_static_obstacles() {
+fn setup_camera() {
+    Entity::new()
+        .with_merge(make_perspective_infinite_reverse_camera())
+        .with(aspect_ratio_from_window(), EntityId::resources())
+        .with_default(main_scene())
+        .with(translation(), vec3(0., 10., 10.))
+        .with(lookat_target(), vec3(0., 0., 0.))
+        .spawn();
+}
+
+fn setup_environment() {
+    Entity::new()
+        .with_merge(make_transformable())
+        .with_default(quad())
+        .with(scale(),Vec3::splat(20.))
+        .with(color(),vec3(0.5,0.5,0.5).extend(1.))
+        .spawn();
+}
+
+fn setup_static_obstacles() {
     let grid_wall = Entity::new()
         .with(name(), "grid_wall".to_string())
         .with_merge(make_transformable())
@@ -156,22 +168,27 @@ fn gen_static_obstacles() {
     entity::add_child(grid_crate, Entity::new()
         .with(translation(), vec3(0., 0., 0.2))
         .with(scale(), Vec3::splat(0.8))
-        .with_default(cube())
+        // .with_default(cube())
+                .with(prefab_from_url(), asset::url("assets/cactus plant block.glb").unwrap())
+                .with(rotation(),Quat::from_rotation_x(1.0) * Quat::from_rotation_z(1.0) * Quat::from_rotation_y(-0.5))
         .with_default(local_to_parent())
-        .with(color(), vec3(1., 0.5, 0.).extend(1.))
+        // .with(color(), vec3(1., 0.5, 0.).extend(1.))
     .spawn());
 }
+
+use std::f32::consts::PI;
 
 use ambient_api::{
     components::core::{
         app::main_scene,
         camera::aspect_ratio_from_window,
+        prefab::{prefab_from_url},
         primitives::{cube, quad},
         rendering::{color},
         transform::{lookat_target, translation},
     },
     concepts::{make_perspective_infinite_reverse_camera, make_transformable},
-    prelude::*,
+    prelude::*, entity::mutate_component,
 };
 
 use components::{cx, cy, move_cx, move_cy, pushed_src, pushed_dx, pushed_dy, health, controlled_by_pin,pushable, };
