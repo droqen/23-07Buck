@@ -1,0 +1,14 @@
+conversation.txt
+
+- models not loading on fredrik's end (bug, issue report)
+
+
+
+- modding feedback loop should be short
+- tic tac toe is interesting to mod?
+	clickable ball grid
+
+* the simplest thing is the easiest to mod!
+
+(?) game studio, the game we're building... the way you play it is by creating mods for it
+fredrik, tobias
