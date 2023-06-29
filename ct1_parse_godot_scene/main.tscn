@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://qh0yuxy5budf"]
+
+[ext_resource type="PackedScene" uid="uid://dadgsiesjv4v8" path="res://buildingside.glb" id="1_i4smx"]
+
+[node name="master node with space in its name" type="Node3D"]
+
+[node name="camera,ok" type="Camera3D" parent="."]
+transform = Transform3D(0.866025, 0.146186, -0.478152, 0, 0.956305, 0.292372, 0.5, -0.253201, 0.828184, -0.5, 0.474, 1.084)
+
+[node name="buildingside" parent="." instance=ExtResource("1_i4smx")]
+transform = Transform3D(-0.0266306, 0, 0.999645, 0, 1, 0, -0.999645, 0, -0.0266306, 0.101433, 0, -0.151978)
