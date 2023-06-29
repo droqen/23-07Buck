@@ -4,8 +4,12 @@ members = [
     "w00_3dof",
     "w01_hex",
     "w02-broughlike",
+    "w03_ragna",
 
     "test00-child",
     "test01-filter-scopes",
     "test02-parent-collider",
+
+    "ct0_async",
+    "ct1_parse_godot_scene",
 ]
