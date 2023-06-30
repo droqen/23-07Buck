@@ -1,0 +1,25 @@
+[package]
+name = "w_04_sceneloader"
+
+edition = "2021"
+publish = false
+version = "0.0.1"
+
+[dependencies]
+ambient_api = { git = "https://github.com/AmbientRun/Ambient.git", rev = "b429d0b3" }
+regex = "1"
+glam = "0.24.1"
+
+[[bin]]
+name = "client_w_04_sceneloader"
+path = "src/client.rs"
+required-features = ["client"]
+
+[[bin]]
+name = "server_w_04_sceneloader"
+path = "src/server.rs"
+required-features = ["server"]
+
+[features]
+client = ["ambient_api/client"]
+server = ["ambient_api/server"]

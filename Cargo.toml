@@ -5,6 +5,7 @@ members = [
     "w01_hex",
     "w02-broughlike",
     "w03_ragna",
+    "w04_sceneloader",
 
     "test00-child",
     "test01-filter-scopes",
