@@ -20,22 +20,18 @@ pub fn test_get_nodes() -> HashMap<String, GodotNode> {
     //     .expect("Failed to read the file");
 
     let file_contents = r#"
-[gd_scene load_steps=2 format=3 uid="uid://cw7bdgetk377t"]
+[gd_scene load_steps=2 format=3 uid="uid://b40ya78wp0im2"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_oj0wp"]
+[ext_resource type="PackedScene" uid="uid://lv3sj0ceuydt" path="res://buildingside_only.glb" id="1_6fa1a"]
 
-[node name="sceneTest" type="Node3D"]
+[node name="model_place" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.168754, 0.340213)
 
-[node name="cube1" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.21846)
-mesh = SubResource("BoxMesh_oj0wp")
+[node name="buildingside_only" parent="." instance=ExtResource("1_6fa1a")]
+transform = Transform3D(-0.528764, 0, 0.848769, 0, 1, 0, -0.848769, 0, -0.528764, -0.288356, 0, -0.364163)
 
-[node name="cube2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25322, 0)
-mesh = SubResource("BoxMesh_oj0wp")
-
-[node name="camera" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 5, 5, 5)
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.385118, 0.59303, 0, 0.838671, 0.544639, -0.707107, -0.385118, 0.59303, 1, 1, 1)
     "#;
 
     // println!("main.tscn contents = \n{file_contents}");
