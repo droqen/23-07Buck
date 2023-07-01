@@ -20,14 +20,16 @@ pub fn main() {
     for (_key, node) in nodes {
         let node_pos : Option<Vec3> = node.pos;
         let node_rot : Option<Quat> = node.rot;
+        let node_siz : Option<Vec3> = node.siz;
         match node.name.as_str() {
             "cube1" | "cube2"=>{
-                println!("Spawn one cube @ pos {:?} rot {:?}", node_pos.unwrap(), node_rot.unwrap());
+                println!("Spawn one cube @ pos {:?} rot {:?} siz {:?}", node_pos.unwrap(), node_rot.unwrap(), node_siz.unwrap());
                 Entity::new()
                     .with_merge(make_transformable())
                     .with_default(cube())
                     .with(translation(), node_pos.unwrap())
                     .with(rotation(), node_rot.unwrap())
+                    .with(scale(), node_siz.unwrap())
                     .spawn();
             },
             "camera"=>{
@@ -42,12 +44,20 @@ pub fn main() {
                         // .with_default(cube())
                         .with(translation(), node_pos.unwrap())
                         .with(rotation(), node_rot.unwrap())
+                        .with(scale(), node_siz.unwrap())
                         .with(prefab_from_url(), asset::url("assets/".to_owned()+&path).unwrap())
                         .spawn();
                 }
             }
         }
     }
+
+    //UNCOMMENT TO SCALE BUILDINGSIDE UP AND DOWN (WARNING: DIZZYING)
+    // query(scale()).requires(prefab_from_url()).each_frame(|scalers|for(id,(_))in scalers{
+    //     entity::mutate_component(id, scale(), |siz|{
+    //         *siz = Vec3::splat(3. + 2. * time().as_secs_f64().sin() as f32)
+    //     });
+    // });
 
     // Entity::new()
     //     .with_merge(make_transformable())
@@ -63,7 +73,7 @@ use ambient_api::{
         camera::aspect_ratio_from_window,
         prefab::{prefab_from_url},
         primitives::{cube, quad},
-        transform::{lookat_target, translation, rotation},
+        transform::{lookat_target, translation, rotation, scale},
     },
     concepts::{make_perspective_infinite_reverse_camera, make_transformable},
     prelude::*,
