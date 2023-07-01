@@ -36,11 +36,12 @@ pub fn test_get_nodes() -> HashMap<String, GodotNode> {
             pos:Some(Vec3{x:t[9], z:t[10], y:t[11]}),
             rot:Some(
                 Quat::from_mat3(&Mat3{
-                    x_axis: Vec3{x:t[0], z:-t[1], y:t[2]},
-                    z_axis: -Vec3{x:t[3], z:-t[4], y:t[5]},
-                    y_axis: Vec3{x:t[6], z:-t[7], y:t[8]},
+                    x_axis: Vec3{x:t[0], z:t[1], y:-t[2]},
+                    z_axis: Vec3{x:t[3], z:t[4], y:-t[5]},
+                    y_axis: -Vec3{x:t[6], z:t[7], y:-t[8]},
                 })
-                * Quat::from_rotation_z(90_f32.to_radians())
+                // * Quat::from_rotation_z(90_f32.to_radians())
+                // * Quat::from_rotation_z(1.5)
             ),
             path:None, });
         // println!("Node header: {} @ t{}", &cap[1], &cap[2]);
