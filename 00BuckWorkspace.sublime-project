@@ -2,10 +2,13 @@
 	"folders":
 	[
 		{
-			"path": "."
+			"path": ".",
 		},
 		{
-			"path": "C:\\Users\\hi\\Repos\\Ambient\\guest\\rust\\examples"
-		}
-	]
+			"path": "C:\\Users\\hi\\Repos\\Ambient\\guest\\rust\\examples",
+		},
+		{
+			"path": "C:\\Users\\hi\\Sync\\a\\2023 moon phases\\for-07-03-buck-moon\\02-scene-for-ambient"
+		},
+	],
 }
